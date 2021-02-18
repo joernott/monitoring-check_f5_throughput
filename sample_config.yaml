@@ -1,0 +1,7 @@
+---
+host: "localhost"
+port: 161
+community: "public"
+file: "/var/lib/icinga2/check_f5_throughput_stats.json"
+warning: ""
+critical: ""
