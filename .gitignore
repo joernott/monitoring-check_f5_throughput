@@ -2,3 +2,7 @@ check_f5_throughput
 check_f5_throughput.exe
 check_f5_throughput.tar.gz
 *~
+rpm/SOURCES
+rpm/SRPMS
+rpm/RPMS
+rpm/BUILD

@@ -1,4 +1,4 @@
-# check_f5_throughput - Monitoring F% Loadbalancer Throughput
+# check_f5_throughput - Monitoring F5 Loadbalancer Throughput
 
 This check uses SNMP to determine the F5 loadbalancer throughput. It uses the
 method described in [K50309321: Viewing BIG-IP system throughput statistics](https://support.f5.com/csp/article/K50309321) to retrieve the
