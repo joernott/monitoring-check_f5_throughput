@@ -19,7 +19,7 @@ loadbalancer using SNMP.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-mkdir -p $RPM_BUILD_ROOT/usr/lib64/nagios/plugins /etc/icinga2/
+mkdir -p $RPM_BUILD_ROOT/usr/lib64/nagios/plugins $RPM_BUILD_ROOT/etc/icinga2/
 cd $RPM_BUILD_ROOT
 tar -xzf %{SOURCE0}
 
