@@ -13,11 +13,11 @@ import (
 )
 
 type jsonHistory struct {
-	Timestamp      uint64 `json:timestamp`
-	ClientBytesIn  uint64 `json:clientbytesin`
-	ClientBytesOut uint64 `json:clientbytesout`
-	ServerBytesIn  uint64 `json:serverbytesin`
-	ServerBytesOut uint64 `json:serverbytesout`
+	Timestamp      uint64 `json:"Timestamp"`
+	ClientBytesIn  uint64 `json:"ClientBytesIn"`
+	ClientBytesOut uint64 `json:"ClientBytesOut"`
+	ServerBytesIn  uint64 `json:"ServerBytesIn"`
+	ServerBytesOut uint64 `json:"ServerBytesOut"`
 }
 
 func NewHistory() jsonHistory {
@@ -94,7 +94,7 @@ func addResults(result *gosnmp.SnmpPacket, oids []string, stats []string, data m
 	}
 	data["duration"] = data["timestamp"] - data["last_time"]
 	for _, s := range stats {
-		data["delta_"+s] = data[s] - data["tast_"+s]
+		data["delta_"+s] = data[s] - data["last_"+s]
 		if data["duration"] != 0 {
 			data["throughput_"+s] = data["delta_"+s] * 8 / data["duration"]
 		} else {
@@ -115,7 +115,7 @@ func addResults(result *gosnmp.SnmpPacket, oids []string, stats []string, data m
 func addPerfdata(check *nagiosplugin.Check, data map[string]uint64, stats []string) {
 	for _, s := range stats {
 		check.AddPerfDatum(s, "c", float64(data[s]), 0.0, math.Inf(1), 0.0, 0.0)
-		check.AddPerfDatum("throughput_"+s, "", float64(data["throughput"+s]), 0.0, math.Inf(1), 0.0, 0.0)
+		check.AddPerfDatum("throughput_"+s, "", float64(data["throughput_"+s]), 0.0, math.Inf(1), 0.0, 0.0)
 	}
 	check.AddPerfDatum("throughput_in", "", float64(data["throughput_in"]), 0.0, math.Inf(1), 0.0, 0.0)
 	check.AddPerfDatum("throughput_out", "", float64(data["throughput_out"]), 0.0, math.Inf(1), 0.0, 0.0)
