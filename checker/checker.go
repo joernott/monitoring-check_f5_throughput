@@ -112,12 +112,12 @@ func addResults(result *gosnmp.SnmpPacket, oids []string, stats []string, data m
 	return data
 }
 
-func addPerfdata(check *nagiosplugin.Check, data map[string]uint64, stats []string) {
+func addPerfdata(check *nagiosplugin.Check, data map[string]uint64, stats []string, warn float64, crit float64) {
 	for _, s := range stats {
 		check.AddPerfDatum(s, "c", float64(data[s]), 0.0, math.Inf(1), 0.0, 0.0)
 		check.AddPerfDatum("throughput_"+s, "", float64(data["throughput_"+s]), 0.0, math.Inf(1), 0.0, 0.0)
 	}
-	check.AddPerfDatum("throughput_in", "", float64(data["throughput_in"]), 0.0, math.Inf(1), 0.0, 0.0)
+	check.AddPerfDatum("throughput_in", "", float64(data["throughput_in"]), 0.0, math.Inf(1), warn, crit)
 	check.AddPerfDatum("throughput_out", "", float64(data["throughput_out"]), 0.0, math.Inf(1), 0.0, 0.0)
 }
 
@@ -135,12 +135,15 @@ func Check(
 
 	check := nagiosplugin.NewCheck()
 	defer check.Finish()
+	warn := 0.0
+	crit := 0.0
 	if warningThreshold != "" {
 		warnRange, err = nagiosplugin.ParseRange(warningThreshold)
 		if err != nil {
 			check.AddResult(nagiosplugin.UNKNOWN, "error parsing warning range")
 			return
 		}
+		warn = warnRange.End
 	}
 	if criticalThreshold != "" {
 		critRange, err = nagiosplugin.ParseRange(criticalThreshold)
@@ -148,6 +151,7 @@ func Check(
 			check.AddResult(nagiosplugin.UNKNOWN, "error parsing critical range")
 			return
 		}
+		crit = critRange.End
 	}
 	gosnmp.Default.Target = host
 	gosnmp.Default.Port = port
@@ -164,7 +168,7 @@ func Check(
 		check.AddResult(nagiosplugin.UNKNOWN, "Get() error: "+err.Error())
 	}
 	data = addResults(result, oids, stats, data)
-	addPerfdata(check, data, stats)
+	addPerfdata(check, data, stats, warn, crit)
 
 	err = putHistory(statsFile, data["timestamp"], data["ClientBytesIn"], data["ClientBytesOut"], data["ServerBytesIn"], data["ServerBytesOut"])
 	if err != nil {
@@ -173,11 +177,15 @@ func Check(
 	if warningThreshold+criticalThreshold == "" {
 		check.AddResult(nagiosplugin.OK, "Everything is fine")
 	} else {
-		if warningThreshold != "" && warnRange.Check(float64(data["throughput_in"])) {
-			check.AddResult(nagiosplugin.WARNING, "Warning: Inbound traffic")
-		}
 		if criticalThreshold != "" && critRange.Check(float64(data["throughput_in"])) {
 			check.AddResult(nagiosplugin.CRITICAL, "Critical: Inbound traffic")
+		} else {
+			if warningThreshold != "" && warnRange.Check(float64(data["throughput_in"])) {
+				check.AddResult(nagiosplugin.WARNING, "Warning: Inbound traffic")
+			} else {
+				check.AddResult(nagiosplugin.OK, "Everything is fine")
+			}
 		}
+
 	}
 }

@@ -7,3 +7,5 @@ rpm/SOURCES
 rpm/SRPMS
 rpm/RPMS
 rpm/BUILD
+*.rpm
+

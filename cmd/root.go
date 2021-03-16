@@ -27,8 +27,8 @@ https://support.f5.com/csp/article/K50309321.`,
 				viper.GetString("host"),
 				uint16(viper.GetInt("port")),
 				viper.GetString("community"),
-				viper.GetString("warningThreshold"),
-				viper.GetString("criticalThreshold"),
+				viper.GetString("warning"),
+				viper.GetString("critical"),
 				viper.GetString("file"))
 		},
 	}
