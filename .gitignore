@@ -3,9 +3,10 @@ check_f5_throughput.exe
 check_f5_throughput.tar.gz
 *~
 *.debug
-rpm/SOURCES
-rpm/SRPMS
-rpm/RPMS
-rpm/BUILD
+SOURCES
+SRPMS
+RPMS
+BUILD
+BUILDROOT
 *.rpm
 
