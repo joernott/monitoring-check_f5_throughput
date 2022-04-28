@@ -28,12 +28,12 @@ fi
 /usr/bin/chmod -Rf a+rX,u+w,g-w,o-w .
 
 %build
-cd "$RPM_BUILD_DIR"
+cd "$RPM_BUILD_DIR/monitoring-check_f5_throughput-%{version}"
 go build -v -o %{name}
 
 %install
-install -Dpm 0755 check_f5_throughput "%{buildroot}/usr/lib64/nagios/plugins/check_f5_throughput"
-install -Dpm 0640 sample_config.yaml "%{buildroot}/etc/icinga2/check_f5_throughput.yaml"
+install -Dpm 0755 %{name}-%{version}/%{name} "%{buildroot}/usr/lib64/nagios/plugins/check_f5_throughput"
+install -Dpm 0640 %{name}-%{version}/sample_config.yaml "%{buildroot}/etc/icinga2/check_f5_throughput.yaml"
 
 %files
 %defattr(-,root,root,755)
